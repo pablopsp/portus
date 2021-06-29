@@ -34,7 +34,7 @@ class Waves:
 
     @staticmethod
     def get_hourly_data(point, param, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/WAVE/"
             + point
             + "?locale=es",
@@ -45,6 +45,8 @@ class Waves:
                 "variable": "WAVE",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
@@ -72,7 +74,7 @@ class SeaLevel:
 
     @staticmethod
     def get_hourly_data(reference_level, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosData/nivelHorario/estacion/"
             + SeaLevel.Points.Mareografo_de_Bilbao_III
             + "?locale=es",
@@ -83,10 +85,12 @@ class SeaLevel:
                 "variable": "SEA_LEVEL",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
     @staticmethod
     def get_daily_data(reference_level, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosData/nivelDia/estacion/"
             + SeaLevel.Points.Mareografo_de_Bilbao_III
             + "?locale=es",
@@ -97,10 +101,12 @@ class SeaLevel:
                 "variable": "SEA_LEVEL",
             },
         )
+        response["periodo"] = "daily"
+        return response
 
     @staticmethod
     def get_monthly_data(reference_level, param, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosData/nivelMes/estacion/"
             + SeaLevel.Points.Mareografo_de_Bilbao_III
             + "?locale=es",
@@ -111,6 +117,8 @@ class SeaLevel:
                 "variable": "SEA_LEVEL",
             },
         )
+        response["periodo"] = "monthly"
+        return response
 
 
 # print(
@@ -150,7 +158,7 @@ class Wind:
 
     @staticmethod
     def get_hourly_data(param, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/WIND/"
             + Wind.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
@@ -161,6 +169,8 @@ class Wind:
                 "variable": "WIND",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
@@ -183,7 +193,7 @@ class PortAgitation:
 
     @staticmethod
     def get_20min_data(param, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AGITATION/"
             + PortAgitation.Points.Mareografo_de_Bilbao_III
             + "?locale=es",
@@ -196,6 +206,8 @@ class PortAgitation:
                 "variable": "AGITATION",
             },
         )
+        response["periodo"] = "20m"
+        return response
 
 
 # print(
@@ -218,7 +230,7 @@ class Temperature:
 
     @staticmethod
     def get_hourly_data(point, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/WATER_TEMP/"
             + point
             + "?locale=es",
@@ -235,6 +247,8 @@ class Temperature:
                 "variable": "WATER_TEMP",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
@@ -252,7 +266,7 @@ class AirPressure:
 
     @staticmethod
     def get_hourly_data(date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AIR_PRESURE/"
             + AirPressure.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
@@ -263,6 +277,8 @@ class AirPressure:
                 "variable": "AIR_PRESURE",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
@@ -282,7 +298,7 @@ class Currents:
 
     @staticmethod
     def get_hourly_data(param, date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/CURRENTS/"
             + Currents.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
@@ -293,6 +309,8 @@ class Currents:
                 "variable": "CURRENTS",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
@@ -310,7 +328,7 @@ class AirTemperature:
 
     @staticmethod
     def get_hourly_data(date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AIR_TEMP/"
             + AirTemperature.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
@@ -321,6 +339,8 @@ class AirTemperature:
                 "variable": "AIR_TEMP",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
@@ -336,7 +356,7 @@ class Salinity:
 
     @staticmethod
     def get_hourly_data(date_ini, date_end):
-        return make_request(
+        response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/SALINITY/"
             + Salinity.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
@@ -347,6 +367,8 @@ class Salinity:
                 "variable": "SALINITY",
             },
         )
+        response["periodo"] = "hourly"
+        return response
 
 
 # print(
