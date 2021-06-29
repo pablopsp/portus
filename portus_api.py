@@ -17,7 +17,8 @@ def make_request(url, postObject):
     return json_response
 
 
-date_to_api_utc = lambda date: date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
+def date_to_api_utc(date):
+    return date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
 
 
 class Waves:
@@ -39,14 +40,25 @@ class Waves:
             + point
             + "?locale=es",
             {
-                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": param}],
+                "graficos": [{"text": "valor", "grafico": "DATOS", "parametro": param}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "WAVE",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
@@ -73,10 +85,10 @@ class SeaLevel:
         MEDIUM_LEVEL = "nivelMedio"
 
     @staticmethod
-    def get_hourly_data(reference_level, date_ini, date_end):
+    def get_hourly_data(point, reference_level, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosData/nivelHorario/estacion/"
-            + SeaLevel.Points.Mareografo_de_Bilbao_III
+            + point
             + "?locale=es",
             {
                 "parametros": {"nivelRef": reference_level,},
@@ -85,14 +97,27 @@ class SeaLevel:
                 "variable": "SEA_LEVEL",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+        del response["fieldNames"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["nivel_referencia"] = reference_level
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
     @staticmethod
-    def get_daily_data(reference_level, date_ini, date_end):
+    def get_daily_data(point, reference_level, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosData/nivelDia/estacion/"
-            + SeaLevel.Points.Mareografo_de_Bilbao_III
+            + point
             + "?locale=es",
             {
                 "parametros": {"nivelRef": reference_level,},
@@ -101,14 +126,27 @@ class SeaLevel:
                 "variable": "SEA_LEVEL",
             },
         )
-        response["periodo"] = "daily"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+        del response["fieldNames"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "daily"
+            response_copy["punto"] = point
+            response_copy["nivel_referencia"] = reference_level
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
     @staticmethod
-    def get_monthly_data(reference_level, param, date_ini, date_end):
+    def get_monthly_data(point, reference_level, param, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosData/nivelMes/estacion/"
-            + SeaLevel.Points.Mareografo_de_Bilbao_III
+            + point
             + "?locale=es",
             {
                 "parametros": {"parametroX": param, "nivelRef": reference_level},
@@ -117,12 +155,27 @@ class SeaLevel:
                 "variable": "SEA_LEVEL",
             },
         )
-        response["periodo"] = "monthly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+        del response["fieldNames"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "monthly"
+            response_copy["punto"] = point
+            response_copy["nivel_referencia"] = reference_level
+            response_copy["parametro_mes"] = param
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     SeaLevel.get_hourly_data(
+#         SeaLevel.Points.Mareografo_de_Bilbao_III,
 #         SeaLevel.ReferenceLevel.CERO_REDMAR,
 #         date_to_api_utc(datetime(1992, 12, 1)),
 #         date_to_api_utc(datetime(1992, 12, 2)),
@@ -131,15 +184,16 @@ class SeaLevel:
 
 # print(
 #     SeaLevel.get_daily_data(
+#         SeaLevel.Points.Mareografo_de_Bilbao_III,
 #         SeaLevel.ReferenceLevel.CERO_REDMAR,
 #         date_to_api_utc(datetime(1992, 12, 1)),
 #         date_to_api_utc(datetime(1992, 12, 3)),
 #     )
 # )
 
-
 # print(
 #     SeaLevel.get_monthly_data(
+#         SeaLevel.Points.Mareografo_de_Bilbao_III,
 #         SeaLevel.ReferenceLevel.CERO_REDMAR,
 #         SeaLevel.MonthlyParam.Carreras,
 #         date_to_api_utc(datetime(1992, 12, 1)),
@@ -157,24 +211,36 @@ class Wind:
         Direccion_procedencia_viento = "dv_md"
 
     @staticmethod
-    def get_hourly_data(param, date_ini, date_end):
+    def get_hourly_data(point, param, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/WIND/"
-            + Wind.Points.Boya_de_Bilbao_Vizcaya
+            + point
             + "?locale=es",
             {
-                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": param}],
+                "graficos": [{"text": "valor", "grafico": "DATOS", "parametro": param}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "WIND",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     Wind.get_hourly_data(
+#         Wind.Points.Boya_de_Bilbao_Vizcaya,
 #         Wind.Params.Direccion_procedencia_viento,
 #         date_to_api_utc(datetime(2020, 6, 1)),
 #         date_to_api_utc(datetime(2020, 6, 15)),
@@ -192,26 +258,38 @@ class PortAgitation:
         Periodo_Medio = "tm02"
 
     @staticmethod
-    def get_20min_data(param, date_ini, date_end):
+    def get_20min_data(point, param, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AGITATION/"
-            + PortAgitation.Points.Mareografo_de_Bilbao_III
+            + point
             + "?locale=es",
             {
                 "graficos": [
-                    {"text": "value", "grafico": "DATOS_AGITACION", "parametro": param,}
+                    {"text": "valor", "grafico": "DATOS_AGITACION", "parametro": param,}
                 ],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "AGITATION",
             },
         )
-        response["periodo"] = "20m"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "20m"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     PortAgitation.get_20min_data(
+#         PortAgitation.Points.Mareografo_de_Bilbao_III,
 #         PortAgitation.Params.Altura_Máxima_del_Oleaje,
 #         date_to_api_utc(datetime(2019, 6, 29)),
 #         date_to_api_utc(datetime(2019, 7, 2)),
@@ -237,7 +315,7 @@ class Temperature:
             {
                 "graficos": [
                     {
-                        "text": "value",
+                        "text": "valor",
                         "grafico": "DATOS",
                         "parametro": Temperature.getPointParam(point),
                     }
@@ -247,8 +325,19 @@ class Temperature:
                 "variable": "WATER_TEMP",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
@@ -265,25 +354,38 @@ class AirPressure:
         Boya_de_Bilbao_Vizcaya = "2136"
 
     @staticmethod
-    def get_hourly_data(date_ini, date_end):
+    def get_hourly_data(point, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AIR_PRESURE/"
-            + AirPressure.Points.Boya_de_Bilbao_Vizcaya
+            + point
             + "?locale=es",
             {
-                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": "ps"}],
+                "graficos": [{"text": "valor", "grafico": "DATOS", "parametro": "ps"}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "AIR_PRESURE",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     AirPressure.get_hourly_data(
-#         date_to_api_utc(datetime(2019, 6, 1)), date_to_api_utc(datetime(2019, 6, 29))
+#         AirPressure.Points.Boya_de_Bilbao_Vizcaya,
+#         date_to_api_utc(datetime(2019, 6, 1)),
+#         date_to_api_utc(datetime(2019, 6, 29)),
 #     )
 # )
 
@@ -297,24 +399,36 @@ class Currents:
         Direccion_prop_de_corriente = "dc_md"
 
     @staticmethod
-    def get_hourly_data(param, date_ini, date_end):
+    def get_hourly_data(point, param, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/CURRENTS/"
-            + Currents.Points.Boya_de_Bilbao_Vizcaya
+            + point
             + "?locale=es",
             {
-                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": param}],
+                "graficos": [{"text": "valor", "grafico": "DATOS", "parametro": param}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "CURRENTS",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     Currents.get_hourly_data(
+#         Currents.Points.Boya_de_Bilbao_Vizcaya,
 #         Currents.Params.Direccion_prop_de_corriente,
 #         date_to_api_utc(datetime(2020, 1, 1)),
 #         date_to_api_utc(datetime(2020, 1, 31)),
@@ -327,25 +441,38 @@ class AirTemperature:
         Boya_de_Bilbao_Vizcaya = "2136"
 
     @staticmethod
-    def get_hourly_data(date_ini, date_end):
+    def get_hourly_data(point, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AIR_TEMP/"
-            + AirTemperature.Points.Boya_de_Bilbao_Vizcaya
+            + point
             + "?locale=es",
             {
-                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": "ta"}],
+                "graficos": [{"text": "valor", "grafico": "DATOS", "parametro": "ta"}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "AIR_TEMP",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     AirTemperature.get_hourly_data(
-#         date_to_api_utc(datetime(2020, 1, 1)), date_to_api_utc(datetime(2020, 3, 1))
+#         AirTemperature.Points.Boya_de_Bilbao_Vizcaya,
+#         date_to_api_utc(datetime(2020, 1, 1)),
+#         date_to_api_utc(datetime(2020, 3, 1)),
 #     )
 # )
 
@@ -355,24 +482,37 @@ class Salinity:
         Boya_de_Bilbao_Vizcaya = "2136"
 
     @staticmethod
-    def get_hourly_data(date_ini, date_end):
+    def get_hourly_data(point, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/SALINITY/"
-            + Salinity.Points.Boya_de_Bilbao_Vizcaya
+            + point
             + "?locale=es",
             {
-                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": "sa2"}],
+                "graficos": [{"text": "valor", "grafico": "DATOS", "parametro": "sa2"}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "SALINITY",
             },
         )
-        response["periodo"] = "hourly"
-        return response
+
+        data = response["datos"]
+        del response["datos"]
+
+        clean_response = []
+        for item in data:
+            response_copy = response.copy()
+            response_copy["periodo"] = "hourly"
+            response_copy["punto"] = point
+            response_copy["datos"] = item
+            clean_response.append(response_copy)
+
+        return clean_response
 
 
 # print(
 #     Salinity.get_hourly_data(
-#         date_to_api_utc(datetime(2020, 3, 1)), date_to_api_utc(datetime(2020, 3, 30))
+#         Salinity.Points.Boya_de_Bilbao_Vizcaya,
+#         date_to_api_utc(datetime(2020, 1, 1)),
+#         date_to_api_utc(datetime(2020, 1, 30)),
 #     )
 # )
