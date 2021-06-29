@@ -6,7 +6,15 @@ def make_request(url, postObject):
     response = requests.post(
         url, json=postObject, headers={"Content-type": "application/json;charset=UTF-8"}
     )
-    return response.json()
+    json_response = response.json()
+
+    # Clean the json
+    json_response.pop("series", None)
+    json_response.pop("groupFields", None)
+    json_response.pop("fieldDecimals", None)
+    json_response.pop("ignoreFields", None)
+
+    return json_response
 
 
 date_to_api_utc = lambda date: date.strftime("%Y-%m-%dT%H:%M:%S.%fZ")
@@ -31,9 +39,7 @@ class Waves:
             + point
             + "?locale=es",
             {
-                "graficos": [
-                    {"text": "Datos horarios", "grafico": "DATOS", "parametro": param}
-                ],
+                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": param}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "WAVE",
@@ -149,9 +155,7 @@ class Wind:
             + Wind.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
             {
-                "graficos": [
-                    {"text": "Datos horarios", "grafico": "DATOS", "parametro": param}
-                ],
+                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": param}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "WIND",
@@ -185,11 +189,7 @@ class PortAgitation:
             + "?locale=es",
             {
                 "graficos": [
-                    {
-                        "text": "Datos cada 20 min",
-                        "grafico": "DATOS_AGITACION",
-                        "parametro": param,
-                    }
+                    {"text": "value", "grafico": "DATOS_AGITACION", "parametro": param,}
                 ],
                 "desde": date_ini,
                 "hasta": date_end,
@@ -225,7 +225,7 @@ class Temperature:
             {
                 "graficos": [
                     {
-                        "text": "Datos horarios",
+                        "text": "value",
                         "grafico": "DATOS",
                         "parametro": Temperature.getPointParam(point),
                     }
@@ -257,9 +257,7 @@ class AirPressure:
             + AirPressure.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
             {
-                "graficos": [
-                    {"text": "Datos horarios", "grafico": "DATOS", "parametro": "ps"}
-                ],
+                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": "ps"}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "AIR_PRESURE",
@@ -289,9 +287,7 @@ class Currents:
             + Currents.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
             {
-                "graficos": [
-                    {"text": "Datos horarios", "grafico": "DATOS", "parametro": param}
-                ],
+                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": param}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "CURRENTS",
@@ -319,9 +315,7 @@ class AirTemperature:
             + AirTemperature.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
             {
-                "graficos": [
-                    {"text": "Datos horarios", "grafico": "DATOS", "parametro": "ta"}
-                ],
+                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": "ta"}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "AIR_TEMP",
@@ -347,9 +341,7 @@ class Salinity:
             + Salinity.Points.Boya_de_Bilbao_Vizcaya
             + "?locale=es",
             {
-                "graficos": [
-                    {"text": "Datos horarios", "grafico": "DATOS", "parametro": "sa2"}
-                ],
+                "graficos": [{"text": "value", "grafico": "DATOS", "parametro": "sa2"}],
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "SALINITY",
