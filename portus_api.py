@@ -1,5 +1,6 @@
 import requests
 from datetime import datetime
+from dateutil import parser
 from portus_mongo import PortusCollections, get_last_item_date_from_collection
 
 
@@ -56,6 +57,7 @@ class Waves:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -63,7 +65,9 @@ class Waves:
 
     @staticmethod
     def get_hourly_until_today(point, param):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.WAVES))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.WAVES)
+        )
         date_end = date_to_api_utc(datetime.now())
         return Waves.get_hourly_data(point, param, date_ini, date_end)
 
@@ -115,6 +119,7 @@ class SeaLevel:
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             response_copy["nivel_referencia"] = reference_level
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -144,6 +149,7 @@ class SeaLevel:
             response_copy["periodo"] = "daily"
             response_copy["punto"] = point
             response_copy["nivel_referencia"] = reference_level
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -174,6 +180,7 @@ class SeaLevel:
             response_copy["punto"] = point
             response_copy["nivel_referencia"] = reference_level
             response_copy["parametro_mes"] = param
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -181,23 +188,25 @@ class SeaLevel:
 
     @staticmethod
     def get_hourly_until_today(point, reference_level):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.SEA_LEVEL))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL)
+        )
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_hourly_data(point, reference_level, date_ini, date_end)
 
     @staticmethod
     def get_daily_until_today(point, reference_level):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(
-            PortusCollections.SEA_LEVEL, "daily"
-        ))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, "daily")
+        )
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_daily_data(point, reference_level, date_ini, date_end)
 
     @staticmethod
     def get_monthly_until_today(point, reference_level, param):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(
-            PortusCollections.SEA_LEVEL, "monthly"
-        ))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, "monthly")
+        )
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_monthly_data(
             point, reference_level, param, date_ini, date_end
@@ -263,6 +272,7 @@ class Wind:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -270,7 +280,9 @@ class Wind:
 
     @staticmethod
     def get_hourly_until_today(point, param):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.WIND))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.WIND)
+        )
         date_end = date_to_api_utc(datetime.now())
         return Wind.get_hourly_data(point, param, date_ini, date_end)
 
@@ -318,6 +330,7 @@ class PortAgitation:
             response_copy = response.copy()
             response_copy["periodo"] = "20m"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -325,7 +338,9 @@ class PortAgitation:
 
     @staticmethod
     def get_hourly_until_today(point, param):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.PORT_AGITATION))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.PORT_AGITATION)
+        )
         date_end = date_to_api_utc(datetime.now())
         return PortAgitation.get_hourly_data(point, param, date_ini, date_end)
 
@@ -377,6 +392,7 @@ class Temperature:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -384,7 +400,9 @@ class Temperature:
 
     @staticmethod
     def get_hourly_until_today(point):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.TEMPERATURE))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.TEMPERATURE)
+        )
         date_end = date_to_api_utc(datetime.now())
         return Temperature.get_hourly_data(point, date_ini, date_end)
 
@@ -424,6 +442,7 @@ class AirPressure:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -431,7 +450,9 @@ class AirPressure:
 
     @staticmethod
     def get_hourly_until_today(point):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.AIR_PRESSURE))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.AIR_PRESSURE)
+        )
         date_end = date_to_api_utc(datetime.now())
         return AirPressure.get_hourly_data(point, date_ini, date_end)
 
@@ -475,6 +496,7 @@ class Currents:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -482,7 +504,9 @@ class Currents:
 
     @staticmethod
     def get_hourly_until_today(point, param):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.CURRENTS))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.CURRENTS)
+        )
         date_end = date_to_api_utc(datetime.now())
         return Currents.get_hourly_data(point, param, date_ini, date_end)
 
@@ -523,6 +547,7 @@ class AirTemperature:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -530,7 +555,9 @@ class AirTemperature:
 
     @staticmethod
     def get_hourly_until_today(point):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.AIR_TEMPERATURE))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.AIR_TEMPERATURE)
+        )
         date_end = date_to_api_utc(datetime.now())
         return AirTemperature.get_hourly_data(point, date_ini, date_end)
 
@@ -570,6 +597,7 @@ class Salinity:
             response_copy = response.copy()
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
+            item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
 
@@ -577,7 +605,9 @@ class Salinity:
 
     @staticmethod
     def get_hourly_until_today(point):
-        date_ini = date_to_api_utc(get_last_item_date_from_collection(PortusCollections.SALINITY))
+        date_ini = date_to_api_utc(
+            get_last_item_date_from_collection(PortusCollections.SALINITY)
+        )
         date_end = date_to_api_utc(datetime.now())
         return Salinity.get_hourly_data(point, date_ini, date_end)
 
