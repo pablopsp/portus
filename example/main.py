@@ -156,3 +156,16 @@ dataSalinity = Salinity.get_hourly_data(
 print("Salinity data length: " + str(len(dataSalinity)))
 insert_many_documents(PortusCollections.SALINITY, dataSalinity)
 print("Datos de salinity insertados \n")
+
+
+import time
+
+print("Añadiendo delay de 5s..")
+time.sleep(5)
+print("Buscando datos de Waves hasta el dia de hoy")
+new_items = Waves.get_hourly_until_today(
+    Waves.Points.Boya_Costera_de_Bilbao_II, Waves.Params.Altura_Máxima_del_Oleaje,
+)
+print("Se encontraron " + str(len(new_items)) + " nuevo datos")
+insert_many_documents(PortusCollections.WAVES, new_items)
+print("Datos de Waves actualizados hasta " + datetime.now().__str__())
