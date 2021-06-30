@@ -43,10 +43,23 @@ def insert_many_documents(collection_name, list_to_insert):
 
 
 def get_last_item_date_from_collection(collection_name, period="hourly"):
-    from dateutil import parser
-
     col = db[collection_name]
     last_date_item = (
         col.find({"periodo": period}).sort("datos.fecha", -1).limit(1).next()
     )
-    return parser.parse(last_date_item["datos"]["fecha"])
+    return last_date_item["datos"]["fecha"]
+
+
+def get_documents_between_date_range(collection_name, date_ini, date_end):
+    col = db[collection_name]
+    return list(
+        col.find(
+            {"datos.fecha": {"$gte": date_ini}, "datos.fecha": {"$lte": date_end},}
+        )
+    )
+
+
+# from datetime import datetime
+# get_documents_between_date_range(
+#     PortusCollections.WAVES, datetime(2020, 1, 1), datetime(2020, 1, 30)
+# )
