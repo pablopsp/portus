@@ -46,5 +46,7 @@ def get_last_item_date_from_collection(collection_name, period="hourly"):
     from dateutil import parser
 
     col = db[collection_name]
-    last_date_item = col.find().sort("datos.fecha", -1).limit(1).next()
+    last_date_item = (
+        col.find({"periodo": period}).sort("datos.fecha", -1).limit(1).next()
+    )
     return parser.parse(last_date_item["datos"]["fecha"])
