@@ -36,7 +36,7 @@ dataWaves = Waves.get_hourly_data(
 )
 print("Waves data length: " + str(len(dataWaves)))
 insert_many_documents(PortusCollections.WAVES, dataWaves)
-print("Datos de waves insertados")
+print("Datos de waves insertados \n")
 
 
 # SEA LEVEL HOURLY
@@ -49,7 +49,7 @@ dataSeaLevel1 = SeaLevel.get_hourly_data(
 )
 print("Sea level hourly data length: " + str(len(dataSeaLevel1)))
 insert_many_documents(PortusCollections.SEA_LEVEL, dataSeaLevel1)
-print("Datos de sea level hourly insertados")
+print("Datos de sea level hourly insertados \n")
 
 
 # SEA LEVEL DAILY
@@ -62,7 +62,7 @@ dataSeaLevel2 = SeaLevel.get_daily_data(
 )
 print("Sea level daily data length: " + str(len(dataSeaLevel2)))
 insert_many_documents(PortusCollections.SEA_LEVEL, dataSeaLevel2)
-print("Datos de sea level daily insertados")
+print("Datos de sea level daily insertados \n")
 
 
 # SEA LEVEL MONTHLY
@@ -76,7 +76,7 @@ dataSeaLevel3 = SeaLevel.get_monthly_data(
 )
 print("Sea level monthly data length: " + str(len(dataSeaLevel3)))
 insert_many_documents(PortusCollections.SEA_LEVEL, dataSeaLevel3)
-print("Datos de sea level monthly insertados")
+print("Datos de sea level monthly insertados \n")
 
 
 # WIND
@@ -89,7 +89,7 @@ dataWind = Wind.get_hourly_data(
 )
 print("Wind data length: " + str(len(dataWind)))
 insert_many_documents(PortusCollections.WIND, dataWind)
-print("Datos de wind insertados")
+print("Datos de wind insertados \n")
 
 
 # PORT AGITATION
@@ -102,7 +102,7 @@ dataPortAgitation = PortAgitation.get_20min_data(
 )
 print("Port agitation data length: " + str(len(dataPortAgitation)))
 insert_many_documents(PortusCollections.PORT_AGITATION, dataPortAgitation)
-print("Datos de port agitation insertados")
+print("Datos de port agitation insertados \n")
 
 
 # TEMPERATURE
@@ -112,7 +112,7 @@ dataTemperature = Temperature.get_hourly_data(
 )
 print("Temperature data length: " + str(len(dataTemperature)))
 insert_many_documents(PortusCollections.TEMPERATURE, dataTemperature)
-print("Datos de temperature insertados")
+print("Datos de temperature insertados \n")
 
 
 # AIR PRESSURE
@@ -122,7 +122,7 @@ dataAirPressure = AirPressure.get_hourly_data(
 )
 print("Air pressure data length: " + str(len(dataAirPressure)))
 insert_many_documents(PortusCollections.AIR_PRESSURE, dataAirPressure)
-print("Datos de air pressure insertados")
+print("Datos de air pressure insertados \n")
 
 
 # CURRENTS
@@ -135,7 +135,7 @@ dataCurrents = Currents.get_hourly_data(
 )
 print("Currents data length: " + str(len(dataCurrents)))
 insert_many_documents(PortusCollections.CURRENTS, dataCurrents)
-print("Datos de currents insertados")
+print("Datos de currents insertados \n")
 
 
 # AIR TEMPERATURE
@@ -145,7 +145,7 @@ dataAirTemperature = AirTemperature.get_hourly_data(
 )
 print("Air temperature data length: " + str(len(dataAirTemperature)))
 insert_many_documents(PortusCollections.AIR_TEMPERATURE, dataAirTemperature)
-print("Datos de air temperature insertados")
+print("Datos de air temperature insertados \n")
 
 
 # SALINITY
@@ -155,4 +155,4 @@ dataSalinity = Salinity.get_hourly_data(
 )
 print("Salinity data length: " + str(len(dataSalinity)))
 insert_many_documents(PortusCollections.SALINITY, dataSalinity)
-print("Datos de salinity insertados")
+print("Datos de salinity insertados \n")
