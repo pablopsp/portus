@@ -30,10 +30,21 @@ def insert_many_documents(collection_name, list_to_insert):
             )
         else:
             col.create_index(
-                "datos.fecha", name="dateIndex", unique=True, background=True
+                [("datos.fecha", ASCENDING)],
+                name="dateIndex",
+                unique=True,
+                background=True,
             )
 
         [col.update(item, item, upsert=True) for item in list_to_insert]
 
     else:
         print("Lista para insertar sin datos")
+
+
+def get_last_item_date_from_collection(collection_name, period="hourly"):
+    from dateutil import parser
+
+    col = db[collection_name]
+    last_date_item = col.find().sort("datos.fecha", -1).limit(1).next()
+    return parser.parse(last_date_item["datos"]["fecha"])
