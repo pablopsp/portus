@@ -23,7 +23,7 @@ date_ini = date_to_api_utc(datetime(2020, 1, 1))
 date_end = date_to_api_utc(datetime(2020, 1, 30))
 
 
-print("Buscando datos entre" + date_ini.__str__() + " y " + date_end.__str__())
+print("Buscando datos entre " + date_ini.__str__() + " y " + date_end.__str__())
 
 
 # WAVES

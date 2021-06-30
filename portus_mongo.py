@@ -1,8 +1,8 @@
-import pymongo
+from pymongo import MongoClient, ASCENDING
 
-client = pymongo.MongoClient("mongodb://localhost:27017/")
+connection = MongoClient("mongodb://localhost:27017/")
 
-db = client["Portus"]
+db = connection["Portus"]
 
 
 class PortusCollections:
@@ -17,9 +17,23 @@ class PortusCollections:
     SALINITY = "Salinity"
 
 
-def insert_many_documents(collection, dict_to_insert):
-    if dict_to_insert:
-        collection = db[collection]
-        collection.insert_many(dict_to_insert, ordered=False)
+def insert_many_documents(collection_name, list_to_insert):
+    if list_to_insert:
+        col = db[collection_name]
+
+        if collection_name == PortusCollections.SEA_LEVEL:
+            col.create_index(
+                [("datos.fecha", ASCENDING), ("periodo", ASCENDING)],
+                name="dateIndex",
+                unique=True,
+                background=True,
+            )
+        else:
+            col.create_index(
+                "datos.fecha", name="dateIndex", unique=True, background=True
+            )
+
+        [col.update(item, item, upsert=True) for item in list_to_insert]
+
     else:
         print("Lista para insertar sin datos")
