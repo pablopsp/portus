@@ -189,7 +189,7 @@ class SeaLevel:
     @staticmethod
     def get_hourly_until_today(point, reference_level):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL)
+            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_hourly_data(point, reference_level, date_ini, date_end)
@@ -197,7 +197,7 @@ class SeaLevel:
     @staticmethod
     def get_daily_until_today(point, reference_level):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, "daily")
+            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, point, "daily")
         )
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_daily_data(point, reference_level, date_ini, date_end)
@@ -205,7 +205,7 @@ class SeaLevel:
     @staticmethod
     def get_monthly_until_today(point, reference_level, param):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, "monthly")
+            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, point, "monthly")
         )
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_monthly_data(
@@ -281,7 +281,7 @@ class Wind:
     @staticmethod
     def get_hourly_until_today(point, param):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.WIND)
+            get_last_item_date_from_collection(PortusCollections.WIND, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return Wind.get_hourly_data(point, param, date_ini, date_end)
@@ -339,7 +339,7 @@ class PortAgitation:
     @staticmethod
     def get_hourly_until_today(point, param):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.PORT_AGITATION)
+            get_last_item_date_from_collection(PortusCollections.PORT_AGITATION, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return PortAgitation.get_hourly_data(point, param, date_ini, date_end)
@@ -401,7 +401,7 @@ class Temperature:
     @staticmethod
     def get_hourly_until_today(point):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.TEMPERATURE)
+            get_last_item_date_from_collection(PortusCollections.TEMPERATURE, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return Temperature.get_hourly_data(point, date_ini, date_end)
@@ -451,7 +451,7 @@ class AirPressure:
     @staticmethod
     def get_hourly_until_today(point):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.AIR_PRESSURE)
+            get_last_item_date_from_collection(PortusCollections.AIR_PRESSURE, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return AirPressure.get_hourly_data(point, date_ini, date_end)
@@ -505,7 +505,7 @@ class Currents:
     @staticmethod
     def get_hourly_until_today(point, param):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.CURRENTS)
+            get_last_item_date_from_collection(PortusCollections.CURRENTS, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return Currents.get_hourly_data(point, param, date_ini, date_end)
@@ -556,7 +556,7 @@ class AirTemperature:
     @staticmethod
     def get_hourly_until_today(point):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.AIR_TEMPERATURE)
+            get_last_item_date_from_collection(PortusCollections.AIR_TEMPERATURE, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return AirTemperature.get_hourly_data(point, date_ini, date_end)
@@ -606,7 +606,7 @@ class Salinity:
     @staticmethod
     def get_hourly_until_today(point):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.SALINITY)
+            get_last_item_date_from_collection(PortusCollections.SALINITY, point)
         )
         date_end = date_to_api_utc(datetime.now())
         return Salinity.get_hourly_data(point, date_ini, date_end)

@@ -42,12 +42,16 @@ def insert_many_documents(collection_name, list_to_insert):
         print("Lista para insertar sin datos")
 
 
-def get_last_item_date_from_collection(collection_name, period="hourly"):
+def get_last_item_date_from_collection(collection_name, point, period="hourly"):
     col = db[collection_name]
-    last_date_item = (
-        col.find({"periodo": period}).sort("datos.fecha", -1).limit(1).next()
+    last_date_item = list(
+        col.find({"periodo": period, "punto": point}).sort("datos.fecha", -1).limit(1)
     )
-    return last_date_item["datos"]["fecha"]
+
+    if(len(last_date_item) != 0)
+        return last_date_item[0]["datos"]["fecha"]
+    else:
+        return None
 
 
 def get_documents_between_date_range(collection_name, date_ini, date_end):
