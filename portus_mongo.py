@@ -23,14 +23,14 @@ def insert_many_documents(collection_name, list_to_insert):
 
         if collection_name == PortusCollections.SEA_LEVEL:
             col.create_index(
-                [("datos.fecha", ASCENDING), ("periodo", ASCENDING)],
+                [("datos.fecha", ASCENDING), ("periodo", ASCENDING), ("punto", ASCENDING)],
                 name="dateIndex",
                 unique=True,
                 background=True,
             )
         else:
             col.create_index(
-                [("datos.fecha", ASCENDING)],
+                [("datos.fecha", ASCENDING), ("punto", ASCENDING)],
                 name="dateIndex",
                 unique=True,
                 background=True,
@@ -48,7 +48,7 @@ def get_last_item_date_from_collection(collection_name, point, period="hourly"):
         col.find({"periodo": period, "punto": point}).sort("datos.fecha", -1).limit(1)
     )
 
-    if(len(last_date_item) != 0)
+    if(len(last_date_item) != 0):
         return last_date_item[0]["datos"]["fecha"]
     else:
         return None
