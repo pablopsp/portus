@@ -23,14 +23,14 @@ def insert_many_documents(collection_name, list_to_insert):
 
         if collection_name == PortusCollections.SEA_LEVEL:
             col.create_index(
-                [("datos.fecha", ASCENDING), ("periodo", ASCENDING), ("punto", ASCENDING)],
+                [("datos.fecha", ASCENDING), ("periodo", ASCENDING), ("punto", ASCENDING), ("parametro", ASCENDING)],
                 name="dateIndex",
                 unique=True,
                 background=True,
             )
         else:
             col.create_index(
-                [("datos.fecha", ASCENDING), ("punto", ASCENDING)],
+                [("datos.fecha", ASCENDING), ("punto", ASCENDING), ("parametro", ASCENDING)],
                 name="dateIndex",
                 unique=True,
                 background=True,
