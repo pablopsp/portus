@@ -1,8 +1,23 @@
-from pymongo import MongoClient, ASCENDING
+import asyncio
+from loguru import logger
+import motor.motor_asyncio
+from pymongo import ASCENDING, UpdateOne
+from pymongo.errors import BulkWriteError
 
-connection = MongoClient("mongodb://localhost:27017/")
-
-db = connection["Portus"]
+client = motor.motor_asyncio.AsyncIOMotorClient("mongodb://localhost:27017/")
+db = client["InvarsatAnalyzer"]
+col = db["Portus"]
+col.create_index(
+    [
+        ("variable", ASCENDING),
+        ("punto", ASCENDING),
+        ("parametro", ASCENDING),
+        ("datos.fecha", ASCENDING),
+    ],
+    name="dateIndex",
+    unique=True,
+    background=True,
+)
 
 
 class PortusCollections:
@@ -17,48 +32,46 @@ class PortusCollections:
     SALINITY = "Salinity"
 
 
-def insert_many_documents(collection_name, list_to_insert):
+async def insert_many_documents(list_to_insert):
+    client.get_io_loop = asyncio.get_running_loop
+
     if list_to_insert:
-        col = db[collection_name]
-
-        if collection_name == PortusCollections.SEA_LEVEL:
-            col.create_index(
-                [("datos.fecha", ASCENDING), ("periodo", ASCENDING), ("punto", ASCENDING), ("parametro", ASCENDING)],
-                name="dateIndex",
-                unique=True,
-                background=True,
-            )
-        else:
-            col.create_index(
-                [("datos.fecha", ASCENDING), ("punto", ASCENDING), ("parametro", ASCENDING)],
-                name="dateIndex",
-                unique=True,
-                background=True,
-            )
-
-        [col.update(item, item, upsert=True) for item in list_to_insert]
-
+        chunks = [
+            list_to_insert[i : i + 1000] for i in range(0, len(list_to_insert), 1000)
+        ]
+        for chunk in chunks:
+            operations = [
+                UpdateOne(item, {"$set": item}, upsert=True) for item in chunk
+            ]
+            try:
+                await col.bulk_write(operations, ordered=False)
+            except BulkWriteError as bwe:
+                logger.error(bwe.details)
     else:
-        print("Lista para insertar sin datos")
+        logger.warning("Lista para insertar sin datos")
 
 
-def get_last_item_date_from_collection(collection_name, point, period="hourly"):
-    col = db[collection_name]
+def get_last_item_date_from_collection(var_name, point):
     last_date_item = list(
-        col.find({"periodo": period, "punto": point}).sort("datos.fecha", -1).limit(1)
+        col.find({"variable": var_name, "punto": point})
+        .sort("datos.fecha", -1)
+        .limit(1)
     )
 
-    if(len(last_date_item) != 0):
+    if len(last_date_item) != 0:
         return last_date_item[0]["datos"]["fecha"]
     else:
         return None
 
 
-def get_documents_between_date_range(collection_name, date_ini, date_end):
-    col = db[collection_name]
+def get_documents_between_date_range(var_name, date_ini, date_end):
     return list(
         col.find(
-            {"datos.fecha": {"$gte": date_ini}, "datos.fecha": {"$lte": date_end},}
+            {
+                "variable": var_name,
+                "datos.fecha": {"$gte": date_ini},
+                "datos.fecha": {"$lte": date_end},
+            }
         )
     )
 

@@ -55,6 +55,7 @@ class Waves:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.WAVES
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
@@ -66,8 +67,9 @@ class Waves:
     @staticmethod
     def get_hourly_until_today(point, param):
         date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.WAVES)
+            get_last_item_date_from_collection(PortusCollections.WAVES, point)
         )
+        print(date_ini)
         date_end = date_to_api_utc(datetime.now())
         return Waves.get_hourly_data(point, param, date_ini, date_end)
 
@@ -86,100 +88,35 @@ class SeaLevel:
     class Points:
         Mareografo_de_Bilbao_III = "3114"
 
-    class MonthlyParam:
-        Niveles = "niv"
-        Carreras = "rec"
-
-    class ReferenceLevel:
-        CERO_REDMAR = "ceroRedmar"
-        CERO_HIDROGRAFICO = "ceroHidro"
-        MEDIUM_LEVEL = "nivelMedio"
-
     @staticmethod
-    def get_hourly_data(point, reference_level, date_ini, date_end):
+    def get_hourly_data(point, date_ini, date_end):
         response = make_request(
-            "https://portus.puertos.es/portussvr/api/historicosData/nivelHorario/estacion/"
+            "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/SEA_LEVEL/"
             + point
             + "?locale=es",
             {
-                "parametros": {"nivelRef": reference_level,},
                 "desde": date_ini,
                 "hasta": date_end,
                 "variable": "SEA_LEVEL",
+                "graficos": [
+                    {
+                        "text": "valor",
+                        "grafico": "DATOS_NIV",
+                        "parametro": "niv_h_m",
+                    }
+                ],
             },
         )
 
         data = response["datos"]
         del response["datos"]
-        del response["fieldNames"]
 
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.SEA_LEVEL
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
-            response_copy["nivel_referencia"] = reference_level
-            item["fecha"] = parser.parse(item["fecha"])
-            response_copy["datos"] = item
-            clean_response.append(response_copy)
-
-        return clean_response
-
-    @staticmethod
-    def get_daily_data(point, reference_level, date_ini, date_end):
-        response = make_request(
-            "https://portus.puertos.es/portussvr/api/historicosData/nivelDia/estacion/"
-            + point
-            + "?locale=es",
-            {
-                "parametros": {"nivelRef": reference_level,},
-                "desde": date_ini,
-                "hasta": date_end,
-                "variable": "SEA_LEVEL",
-            },
-        )
-
-        data = response["datos"]
-        del response["datos"]
-        del response["fieldNames"]
-
-        clean_response = []
-        for item in data:
-            response_copy = response.copy()
-            response_copy["periodo"] = "daily"
-            response_copy["punto"] = point
-            response_copy["nivel_referencia"] = reference_level
-            item["fecha"] = parser.parse(item["fecha"])
-            response_copy["datos"] = item
-            clean_response.append(response_copy)
-
-        return clean_response
-
-    @staticmethod
-    def get_monthly_data(point, reference_level, param, date_ini, date_end):
-        response = make_request(
-            "https://portus.puertos.es/portussvr/api/historicosData/nivelMes/estacion/"
-            + point
-            + "?locale=es",
-            {
-                "parametros": {"parametroX": param, "nivelRef": reference_level},
-                "desde": date_ini,
-                "hasta": date_end,
-                "variable": "SEA_LEVEL",
-            },
-        )
-
-        data = response["datos"]
-        del response["datos"]
-        del response["fieldNames"]
-
-        clean_response = []
-        for item in data:
-            response_copy = response.copy()
-            response_copy["periodo"] = "monthly"
-            response_copy["punto"] = point
-            response_copy["nivel_referencia"] = reference_level
-            response_copy["parametro_mes"] = param
             item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
             clean_response.append(response_copy)
@@ -194,50 +131,12 @@ class SeaLevel:
         date_end = date_to_api_utc(datetime.now())
         return SeaLevel.get_hourly_data(point, reference_level, date_ini, date_end)
 
-    @staticmethod
-    def get_daily_until_today(point, reference_level):
-        date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, point, "daily")
-        )
-        date_end = date_to_api_utc(datetime.now())
-        return SeaLevel.get_daily_data(point, reference_level, date_ini, date_end)
-
-    @staticmethod
-    def get_monthly_until_today(point, reference_level, param):
-        date_ini = date_to_api_utc(
-            get_last_item_date_from_collection(PortusCollections.SEA_LEVEL, point, "monthly")
-        )
-        date_end = date_to_api_utc(datetime.now())
-        return SeaLevel.get_monthly_data(
-            point, reference_level, param, date_ini, date_end
-        )
-
 
 # print(
 #     SeaLevel.get_hourly_data(
 #         SeaLevel.Points.Mareografo_de_Bilbao_III,
-#         SeaLevel.ReferenceLevel.CERO_REDMAR,
 #         date_to_api_utc(datetime(1992, 12, 1)),
 #         date_to_api_utc(datetime(1992, 12, 2)),
-#     )
-# )
-
-# print(
-#     SeaLevel.get_daily_data(
-#         SeaLevel.Points.Mareografo_de_Bilbao_III,
-#         SeaLevel.ReferenceLevel.CERO_REDMAR,
-#         date_to_api_utc(datetime(1992, 12, 1)),
-#         date_to_api_utc(datetime(1992, 12, 3)),
-#     )
-# )
-
-# print(
-#     SeaLevel.get_monthly_data(
-#         SeaLevel.Points.Mareografo_de_Bilbao_III,
-#         SeaLevel.ReferenceLevel.CERO_REDMAR,
-#         SeaLevel.MonthlyParam.Carreras,
-#         date_to_api_utc(datetime(1992, 12, 1)),
-#         date_to_api_utc(datetime(1992, 12, 3)),
 #     )
 # )
 
@@ -270,6 +169,7 @@ class Wind:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.WIND
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
@@ -307,14 +207,18 @@ class PortAgitation:
         Periodo_Medio = "tm02"
 
     @staticmethod
-    def get_20min_data(point, param, date_ini, date_end):
+    def get_hourly_data(point, param, date_ini, date_end):
         response = make_request(
             "https://portus.puertos.es/portussvr/api/historicosSerialTime/estacion/AGITATION/"
             + point
             + "?locale=es",
             {
                 "graficos": [
-                    {"text": "valor", "grafico": "DATOS_AGITACION", "parametro": param,}
+                    {
+                        "text": "valor",
+                        "grafico": "DATOS_AGITACION",
+                        "parametro": param,
+                    }
                 ],
                 "desde": date_ini,
                 "hasta": date_end,
@@ -323,12 +227,15 @@ class PortAgitation:
         )
 
         data = response["datos"]
+        # Remove all the data that is not an exact hour, PortAgitation comes in 20 min intervals
+        data = list(filter(lambda x: parser.parse(x["fecha"]).minute == 0, data))
         del response["datos"]
 
         clean_response = []
         for item in data:
             response_copy = response.copy()
-            response_copy["periodo"] = "20m"
+            response_copy["variable"] = PortusCollections.PORT_AGITATION
+            response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
             response_copy["datos"] = item
@@ -390,6 +297,7 @@ class Temperature:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.TEMPERATURE
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
@@ -440,6 +348,7 @@ class AirPressure:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.AIR_PRESSURE
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
@@ -494,6 +403,7 @@ class Currents:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.CURRENTS
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
@@ -545,6 +455,7 @@ class AirTemperature:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.AIR_TEMPERATURE
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
@@ -595,6 +506,7 @@ class Salinity:
         clean_response = []
         for item in data:
             response_copy = response.copy()
+            response_copy["variable"] = PortusCollections.SALINITY
             response_copy["periodo"] = "hourly"
             response_copy["punto"] = point
             item["fecha"] = parser.parse(item["fecha"])
